@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AgendaItemsService } from './agenda-items.service.js';
 import { CreateAgendaItemDto, UpdateAgendaItemDto } from '../dto/agenda-item.dto.js';
 import { RequestWithUser } from '../types/request-with-user.js';
+import { scopeOf } from '../types/scope.js';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('agenda-items')
@@ -16,21 +17,21 @@ export class AgendaItemsController {
 
   @Get()
   findAll(@Req() req: RequestWithUser) {
-    return this.agendaItemsService.findAll(req.user.userId);
+    return this.agendaItemsService.findAll(scopeOf(req.user));
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.agendaItemsService.findById(id);
+  findOne(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.agendaItemsService.findById(id, scopeOf(req.user));
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateAgendaItemDto) {
-    return this.agendaItemsService.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateAgendaItemDto, @Req() req: RequestWithUser) {
+    return this.agendaItemsService.update(id, dto, scopeOf(req.user));
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.agendaItemsService.remove(id);
+  remove(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.agendaItemsService.remove(id, scopeOf(req.user));
   }
 }

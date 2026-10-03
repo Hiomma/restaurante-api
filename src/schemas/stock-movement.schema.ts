@@ -17,7 +17,7 @@ export class StockMovement {
   @Prop({ type: StockMovementProductSnapshotSchema, required: true })
   product: StockMovementProductSnapshot;
 
-  @Prop({ required: true, enum: ['entry', 'exit'] })
+  @Prop({ required: true, enum: ['entry', 'exit', 'move'] })
   movementType: string;
 
   @Prop({ required: true })

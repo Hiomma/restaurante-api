@@ -1,4 +1,18 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsDateString, ValidateNested, ArrayMinSize } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class PortioningOutputDto {
+  @IsString()
+  @IsNotEmpty()
+  productId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  productName: string;
+
+  @IsNumber()
+  portionsCount: number;
+}
 
 export class CreatePortioningDto {
   @IsString()
@@ -29,6 +43,12 @@ export class CreatePortioningDto {
   @IsNumber()
   @IsOptional()
   portionWeightGrams?: number;
+
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @ArrayMinSize(0)
+  @Type(() => PortioningOutputDto)
+  outputs?: PortioningOutputDto[];
 
   @IsDateString()
   date: string;

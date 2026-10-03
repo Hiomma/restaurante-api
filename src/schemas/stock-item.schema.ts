@@ -48,6 +48,9 @@ export class StockItem {
   batchId: string;
 
   @Prop()
+  destination: string;
+
+  @Prop()
   lote: string;
 
   @Prop()

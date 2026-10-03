@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsObject } from 'class-validator';
+import { IsString, IsOptional, IsObject, MinLength } from 'class-validator';
 
 export class UpdateUserDto {
   @IsString()
@@ -17,4 +17,20 @@ export class UpdateUserDto {
     address?: string;
     phone?: string;
   };
+}
+
+export class ChangePasswordDto {
+  @IsString()
+  @MinLength(4)
+  currentPassword: string;
+
+  @IsString()
+  @MinLength(4)
+  newPassword: string;
+}
+
+export class ResetPasswordDto {
+  @IsString()
+  @MinLength(4)
+  newPassword: string;
 }

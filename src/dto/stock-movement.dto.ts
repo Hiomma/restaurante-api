@@ -11,7 +11,7 @@ export class CreateStockMovementDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsIn(['entry', 'exit'])
+  @IsIn(['entry', 'exit', 'move'])
   movementType: string;
 
   @IsNumber()
@@ -37,7 +37,7 @@ export class CreateStockMovementDto {
 export class UpdateStockMovementDto {
   @IsString()
   @IsOptional()
-  @IsIn(['entry', 'exit'])
+  @IsIn(['entry', 'exit', 'move'])
   movementType?: string;
 
   @IsNumber()

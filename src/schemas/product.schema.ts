@@ -11,6 +11,9 @@ export class Product {
   @Prop({ required: true, enum: ['Carnes', 'Aves', 'Peixes', 'Frios', 'Laticinios', 'Hortifruti', 'Graos', 'Bebidas', 'Temperos', 'Massas', 'Outros'] })
   group: string;
 
+  @Prop({ default: 'Materia Prima', enum: ['Materia Prima', 'Porcionado'] })
+  category: string;
+
   @Prop({ required: true, enum: ['Refrigerado', 'Congelado', 'Temperatura Ambiente', 'Camara Fria'] })
   storageMethod: string;
 

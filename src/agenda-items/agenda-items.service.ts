@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AgendaItem, AgendaItemDocument } from '../schemas/agenda-item.schema.js';
 import { CreateAgendaItemDto, UpdateAgendaItemDto } from '../dto/agenda-item.dto.js';
+import { Scope, ownerFilter, idFilter } from '../types/scope.js';
 
 @Injectable()
 export class AgendaItemsService {
@@ -19,29 +20,29 @@ export class AgendaItemsService {
     return item.save();
   }
 
-  async findAll(ownerId: string): Promise<AgendaItemDocument[]> {
+  async findAll(scope: Scope): Promise<AgendaItemDocument[]> {
     return this.agendaItemModel
-      .find({ owner: new Types.ObjectId(ownerId) })
+      .find(ownerFilter(scope))
       .sort({ datePerformed: -1 })
       .exec();
   }
 
-  async findById(id: string): Promise<AgendaItemDocument> {
-    const item = await this.agendaItemModel.findById(id).exec();
+  async findById(id: string, scope: Scope): Promise<AgendaItemDocument> {
+    const item = await this.agendaItemModel.findOne(idFilter(id, scope)).exec();
     if (!item) throw new NotFoundException('Agenda item not found');
     return item;
   }
 
-  async update(id: string, dto: UpdateAgendaItemDto): Promise<AgendaItemDocument> {
+  async update(id: string, dto: UpdateAgendaItemDto, scope: Scope): Promise<AgendaItemDocument> {
     const item = await this.agendaItemModel
-      .findByIdAndUpdate(id, dto, { new: true })
+      .findOneAndUpdate(idFilter(id, scope), dto, { new: true })
       .exec();
     if (!item) throw new NotFoundException('Agenda item not found');
     return item;
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.agendaItemModel.findByIdAndDelete(id).exec();
+  async remove(id: string, scope: Scope): Promise<void> {
+    const result = await this.agendaItemModel.findOneAndDelete(idFilter(id, scope)).exec();
     if (!result) throw new NotFoundException('Agenda item not found');
   }
 }

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { StockMovement, StockMovementDocument } from '../schemas/stock-movement.schema.js';
 import { CreateStockMovementDto, UpdateStockMovementDto } from '../dto/stock-movement.dto.js';
+import { Scope, ownerFilter, idFilter } from '../types/scope.js';
 
 @Injectable()
 export class StockMovementsService {
@@ -28,29 +29,29 @@ export class StockMovementsService {
     return movement.save();
   }
 
-  async findAll(ownerId: string): Promise<StockMovementDocument[]> {
+  async findAll(scope: Scope): Promise<StockMovementDocument[]> {
     return this.stockMovementModel
-      .find({ owner: new Types.ObjectId(ownerId) })
+      .find(ownerFilter(scope))
       .sort({ date: -1 })
       .exec();
   }
 
-  async findById(id: string): Promise<StockMovementDocument> {
-    const movement = await this.stockMovementModel.findById(id).exec();
+  async findById(id: string, scope: Scope): Promise<StockMovementDocument> {
+    const movement = await this.stockMovementModel.findOne(idFilter(id, scope)).exec();
     if (!movement) throw new NotFoundException('Stock movement not found');
     return movement;
   }
 
-  async update(id: string, dto: UpdateStockMovementDto): Promise<StockMovementDocument> {
+  async update(id: string, dto: UpdateStockMovementDto, scope: Scope): Promise<StockMovementDocument> {
     const movement = await this.stockMovementModel
-      .findByIdAndUpdate(id, dto, { new: true })
+      .findOneAndUpdate(idFilter(id, scope), dto, { new: true })
       .exec();
     if (!movement) throw new NotFoundException('Stock movement not found');
     return movement;
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.stockMovementModel.findByIdAndDelete(id).exec();
+  async remove(id: string, scope: Scope): Promise<void> {
+    const result = await this.stockMovementModel.findOneAndDelete(idFilter(id, scope)).exec();
     if (!result) throw new NotFoundException('Stock movement not found');
   }
 }

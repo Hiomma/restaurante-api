@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ProductsService } from './products.service.js';
 import { CreateProductDto, UpdateProductDto } from '../dto/product.dto.js';
 import { RequestWithUser } from '../types/request-with-user.js';
+import { scopeOf } from '../types/scope.js';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('products')
@@ -16,21 +17,21 @@ export class ProductsController {
 
   @Get()
   findAll(@Req() req: RequestWithUser, @Query('search') search?: string) {
-    return this.productsService.findAll(req.user.userId, search);
+    return this.productsService.findAll(scopeOf(req.user), search);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findById(id);
+  findOne(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.productsService.findById(id, scopeOf(req.user));
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateProductDto) {
-    return this.productsService.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateProductDto, @Req() req: RequestWithUser) {
+    return this.productsService.update(id, dto, scopeOf(req.user));
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(id);
+  remove(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.productsService.remove(id, scopeOf(req.user));
   }
 }

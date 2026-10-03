@@ -12,10 +12,30 @@ export class PortioningProductSnapshot {
 
 export const PortioningProductSnapshotSchema = SchemaFactory.createForClass(PortioningProductSnapshot);
 
+@Schema({ _id: false })
+export class PortioningOutput {
+  @Prop({ required: true })
+  productId: string;
+
+  @Prop({ required: true })
+  productName: string;
+
+  @Prop({ required: true })
+  portionsCount: number;
+
+  @Prop()
+  portionWeightGrams: number;
+}
+
+export const PortioningOutputSchema = SchemaFactory.createForClass(PortioningOutput);
+
 @Schema({ timestamps: true })
 export class Portioning {
   @Prop({ type: PortioningProductSnapshotSchema, required: true })
   product: PortioningProductSnapshot;
+
+  @Prop({ type: [PortioningOutputSchema], default: [] })
+  outputs: PortioningOutput[];
 
   @Prop({ required: true })
   rawWeightGrams: number;

@@ -14,6 +14,9 @@ export class User {
   @Prop({ required: true })
   password: string;
 
+  @Prop({ default: 'admin', enum: ['admin', 'user'] })
+  role: string;
+
   @Prop()
   imagePath: string;
 

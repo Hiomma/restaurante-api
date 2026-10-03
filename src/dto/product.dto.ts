@@ -11,6 +11,11 @@ export class CreateProductDto {
   group: string;
 
   @IsString()
+  @IsOptional()
+  @IsIn(['Materia Prima', 'Porcionado'])
+  category?: string;
+
+  @IsString()
   @IsNotEmpty()
   @IsIn(['Refrigerado', 'Congelado', 'Temperatura Ambiente', 'Camara Fria'])
   storageMethod: string;
@@ -40,6 +45,11 @@ export class UpdateProductDto {
   @IsOptional()
   @IsIn(['Carnes', 'Aves', 'Peixes', 'Frios', 'Laticinios', 'Hortifruti', 'Graos', 'Bebidas', 'Temperos', 'Massas', 'Outros'])
   group?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsIn(['Materia Prima', 'Porcionado'])
+  category?: string;
 
   @IsString()
   @IsOptional()

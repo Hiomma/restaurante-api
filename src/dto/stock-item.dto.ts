@@ -46,6 +46,14 @@ export class CreateStockItemDto {
   @IsString()
   @IsOptional()
   productStorage?: string;
+
+  @IsString()
+  @IsOptional()
+  batchId?: string;
+
+  @IsString()
+  @IsOptional()
+  destination?: string;
 }
 
 export class UpdateStockItemDto {
@@ -65,6 +73,14 @@ export class UpdateStockItemDto {
   @IsString()
   @IsOptional()
   employeeName?: string;
+
+  @IsString()
+  @IsOptional()
+  batchId?: string;
+
+  @IsString()
+  @IsOptional()
+  destination?: string;
 }
 
 export class StockItemQueryDto {
@@ -79,4 +95,8 @@ export class StockItemQueryDto {
   @IsString()
   @IsOptional()
   type?: string;
+
+  @IsString()
+  @IsOptional()
+  destination?: string;
 }

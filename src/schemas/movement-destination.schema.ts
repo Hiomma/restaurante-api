@@ -8,6 +8,9 @@ export class MovementDestination {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ default: 'move', enum: ['move', 'writeoff'] })
+  type: string;
+
   @Prop({ default: true })
   active: boolean;
 
