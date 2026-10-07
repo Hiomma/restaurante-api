@@ -36,7 +36,10 @@ export class PortioningsService {
         productId: o.productId,
         productName: o.productName,
         portionsCount: o.portionsCount,
-        portionWeightGrams,
+        portionWeightGrams:
+          o.portionWeightGrams && o.portionWeightGrams > 0
+            ? Math.round(o.portionWeightGrams)
+            : portionWeightGrams,
       }));
     }
 

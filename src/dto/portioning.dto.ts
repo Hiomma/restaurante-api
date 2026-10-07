@@ -12,6 +12,10 @@ export class PortioningOutputDto {
 
   @IsNumber()
   portionsCount: number;
+
+  @IsNumber()
+  @IsOptional()
+  portionWeightGrams?: number;
 }
 
 export class CreatePortioningDto {
