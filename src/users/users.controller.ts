@@ -71,8 +71,12 @@ export class UsersController {
     @Body() dto: ResetPasswordDto,
     @Req() req: RequestWithUser,
   ) {
-    const scope = scopeOf(req.user);
-    if (!scope.admin) throw new NotFoundException('User not found');
+    // Só a própria conta de restaurante pode redefinir a própria senha.
+    // Administradores são administradores DENTRO do restaurante (papel de
+    // funcionário) e jamais podem trocar a senha de outro restaurante.
+    if (req.user.employeeId || id !== req.user.userId) {
+      throw new NotFoundException('User not found');
+    }
     await this.usersService.resetPassword(id, dto.newPassword);
     return { success: true };
   }

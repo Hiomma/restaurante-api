@@ -39,7 +39,9 @@ export class UsersService {
   }
 
   async findAll(scope: Scope): Promise<UserDocument[]> {
-    const filter: any = scope.admin ? {} : { _id: new Types.ObjectId(scope.ownerId) };
+    // Uma conta de restaurante só enxerga a própria conta: nunca a lista de
+    // proprietários de outros restaurantes.
+    const filter: any = { _id: new Types.ObjectId(scope.ownerId) };
     return this.userModel.find(filter).select('-password').exec();
   }
 

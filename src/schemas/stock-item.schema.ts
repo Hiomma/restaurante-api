@@ -38,7 +38,7 @@ export class StockItem {
   @Prop()
   originalExpiryDate: Date;
 
-  @Prop({ unique: true })
+  @Prop()
   qrCode: string;
 
   @Prop({ default: 'in_stock', enum: ['in_stock', 'used', 'discarded', 'expired'] })
@@ -69,3 +69,11 @@ export class StockItem {
 
 export type StockItemDocument = HydratedDocument<StockItem>;
 export const StockItemSchema = SchemaFactory.createForClass(StockItem);
+
+/**
+ * Unicidade do QR por RESTAURANTE: dois restaurantes podem gerar o mesmo
+ * código de 6 caracteres, mas dentro de um dono o código é único. O índice
+ * global anterior (`qrCode_1`) é removido na inicialização (ver
+ * StockItemsService.onModuleInit).
+ */
+StockItemSchema.index({ owner: 1, qrCode: 1 }, { unique: true });

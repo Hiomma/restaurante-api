@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, OnModuleInit, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { StockItem, StockItemDocument } from '../schemas/stock-item.schema.js';
@@ -15,44 +15,76 @@ function generateQrCode(): string {
 }
 
 @Injectable()
-export class StockItemsService {
+export class StockItemsService implements OnModuleInit {
   constructor(
     @InjectModel(StockItem.name)
     private stockItemModel: Model<StockItemDocument>,
   ) {}
 
+  /**
+   * Migração do índice de QR: a unicidade passou a ser POR RESTAURANTE
+   * (`{ owner, qrCode }`), para que restaurantes diferentes possam gerar o
+   * mesmo código de 6 caracteres. O índice global antigo é removido (idem-
+   * potente: ausente → nada a fazer).
+   */
+  async onModuleInit() {
+    try {
+      await this.stockItemModel.collection.dropIndex('qrCode_1');
+    } catch {
+      // índice antigo já removido (ou nunca existiu)
+    }
+    await this.stockItemModel.syncIndexes();
+  }
+
   async create(dto: CreateStockItemDto, ownerId: string): Promise<StockItemDocument> {
+    // QR enviado pelo cliente (o mesmo já exibido na etiqueta): dentro do
+    // restaurante ele precisa ser único — se já existe, não há o que "retryar"
+    // (regerar faria a etiqueta impressa divergir do banco), então falha com
+    // uma mensagem clara. Sem QR do cliente, o servidor gera um código
+    // único dentro do próprio restaurante (índice { owner, qrCode }).
+    const requestedQr = dto.qrCode?.trim() ? dto.qrCode.trim().toUpperCase() : undefined;
+
+    const build = (qr: string) =>
+      new this.stockItemModel({
+        product: {
+          productId: dto.productId,
+          productName: dto.productName,
+          productGroup: dto.productGroup,
+          productStorage: dto.productStorage,
+        },
+        type: dto.type,
+        weightGrams: dto.weightGrams,
+        manipulationDate: dto.manipulationDate,
+        expiryDate: dto.expiryDate,
+        originalExpiryDate: dto.originalExpiryDate,
+        qrCode: qr,
+        lote: dto.lote,
+        nf: dto.nf,
+        supplier: dto.supplier,
+        employeeName: dto.employeeName,
+        batchId: dto.batchId,
+        destination: dto.destination,
+        status: 'in_stock',
+        owner: new Types.ObjectId(ownerId),
+      });
+
+    if (requestedQr) {
+      try {
+        return await build(requestedQr).save();
+      } catch (error: any) {
+        if (error?.code === 11000) {
+          throw new ConflictException('QR code already exists in this restaurant');
+        }
+        throw error;
+      }
+    }
+
     let item: StockItemDocument | null = null;
     let attempts = 0;
-    // A QR enviado pelo cliente (o mesmo já exibido na etiqueta) só precisa
-    // de retry quando colide com outro documento — nunca é substituído, senão
-    // o QR impresso seria diferente do QR que o usuário acabou de conferir.
-    const requestedQr = dto.qrCode?.trim() ? dto.qrCode.trim().toUpperCase() : undefined;
     while (!item && attempts < 5) {
       attempts++;
       try {
-        item = await new this.stockItemModel({
-          product: {
-            productId: dto.productId,
-            productName: dto.productName,
-            productGroup: dto.productGroup,
-            productStorage: dto.productStorage,
-          },
-          type: dto.type,
-          weightGrams: dto.weightGrams,
-          manipulationDate: dto.manipulationDate,
-          expiryDate: dto.expiryDate,
-          originalExpiryDate: dto.originalExpiryDate,
-          qrCode: requestedQr ?? generateQrCode(),
-          lote: dto.lote,
-          nf: dto.nf,
-          supplier: dto.supplier,
-          employeeName: dto.employeeName,
-          batchId: dto.batchId,
-          destination: dto.destination,
-          status: 'in_stock',
-          owner: new Types.ObjectId(ownerId),
-        }).save();
+        item = await build(generateQrCode()).save();
       } catch (error: any) {
         if (error?.code === 11000 && attempts < 5) continue;
         throw error;
