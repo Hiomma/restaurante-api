@@ -4,6 +4,7 @@ export * from './query.dto.js';
 export * from './agenda-item.dto.js';
 export * from './employee.dto.js';
 export * from './movement-destination.dto.js';
+export * from './supplier.dto.js';
 export * from './product.dto.js';
 export * from './portioning.dto.js';
 export * from './stock-item.dto.js';

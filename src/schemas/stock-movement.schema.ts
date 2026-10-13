@@ -32,6 +32,14 @@ export class StockMovement {
   @Prop()
   reason: string;
 
+  /** Destino da movimentação (Mover/Baixar/Contagem), quando houver. */
+  @Prop()
+  destination: string;
+
+  /** Usuário que realizou a movimentação (nome de exibição). */
+  @Prop()
+  userName: string;
+
   @Prop({ required: true })
   date: Date;
 

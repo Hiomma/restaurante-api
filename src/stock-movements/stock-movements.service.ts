@@ -23,6 +23,8 @@ export class StockMovementsService {
       weightGrams: dto.weightGrams,
       itemType: dto.itemType,
       reason: dto.reason,
+      destination: dto.destination,
+      userName: dto.userName,
       date: dto.date,
       owner: new Types.ObjectId(ownerId),
     });

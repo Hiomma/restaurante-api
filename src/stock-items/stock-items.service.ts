@@ -24,6 +24,10 @@ export class StockItemsService {
   async create(dto: CreateStockItemDto, ownerId: string): Promise<StockItemDocument> {
     let item: StockItemDocument | null = null;
     let attempts = 0;
+    // A QR enviado pelo cliente (o mesmo já exibido na etiqueta) só precisa
+    // de retry quando colide com outro documento — nunca é substituído, senão
+    // o QR impresso seria diferente do QR que o usuário acabou de conferir.
+    const requestedQr = dto.qrCode?.trim() ? dto.qrCode.trim().toUpperCase() : undefined;
     while (!item && attempts < 5) {
       attempts++;
       try {
@@ -39,9 +43,10 @@ export class StockItemsService {
           manipulationDate: dto.manipulationDate,
           expiryDate: dto.expiryDate,
           originalExpiryDate: dto.originalExpiryDate,
-          qrCode: generateQrCode(),
+          qrCode: requestedQr ?? generateQrCode(),
           lote: dto.lote,
           nf: dto.nf,
+          supplier: dto.supplier,
           employeeName: dto.employeeName,
           batchId: dto.batchId,
           destination: dto.destination,
@@ -63,6 +68,7 @@ export class StockItemsService {
     if (query.productId) filter['product.productId'] = query.productId;
     if (query.type) filter.type = query.type;
     if (query.destination) filter.destination = query.destination;
+    if (query.supplier) filter.supplier = query.supplier;
     return this.stockItemModel.find(filter).sort({ expiryDate: 1 }).exec();
   }
 

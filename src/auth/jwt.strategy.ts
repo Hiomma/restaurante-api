@@ -17,6 +17,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return {
       userId: payload.sub,
       username: payload.username,
+      // Nome de exibição de quem está logado — usado para registrar quem
+      // realizou cada movimentação. Tokens antigos podem não tê-lo.
+      name: typeof payload.name === 'string' && payload.name ? payload.name : undefined,
       role: payload.role || 'admin',
       employeeId: payload.employeeId,
     };

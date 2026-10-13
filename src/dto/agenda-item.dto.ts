@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsDateString, IsIn } from 'class-validator';
 
 export class CreateAgendaItemDto {
   @IsString()
@@ -14,6 +14,11 @@ export class CreateAgendaItemDto {
   @IsString()
   @IsOptional()
   observations?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsIn(['no_prazo', 'em_andamento', 'pendente', 'finalizado'])
+  status?: string;
 }
 
 export class UpdateAgendaItemDto {
@@ -32,4 +37,9 @@ export class UpdateAgendaItemDto {
   @IsString()
   @IsOptional()
   observations?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsIn(['no_prazo', 'em_andamento', 'pendente', 'finalizado'])
+  status?: string;
 }

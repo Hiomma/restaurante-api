@@ -56,6 +56,10 @@ export class StockItem {
   @Prop()
   nf: string;
 
+  /** Nome do fornecedor de quem a mercadoria foi recebida (snapshot). */
+  @Prop()
+  supplier: string;
+
   @Prop()
   employeeName: string;
 

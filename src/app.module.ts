@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module.js';
 import { AgendaItemsModule } from './agenda-items/agenda-items.module.js';
 import { EmployeesModule } from './employees/employees.module.js';
 import { MovementDestinationsModule } from './movement-destinations/movement-destinations.module.js';
+import { SuppliersModule } from './suppliers/suppliers.module.js';
 import { ProductsModule } from './products/products.module.js';
 import { PortioningsModule } from './portionings/portionings.module.js';
 import { StockItemsModule } from './stock-items/stock-items.module.js';
@@ -26,6 +27,7 @@ import { StockMovementsModule } from './stock-movements/stock-movements.module.j
     AgendaItemsModule,
     EmployeesModule,
     MovementDestinationsModule,
+    SuppliersModule,
     ProductsModule,
     PortioningsModule,
     StockItemsModule,

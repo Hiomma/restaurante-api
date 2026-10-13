@@ -42,6 +42,14 @@ export class CreatePortioningDto {
 
   @IsNumber()
   @IsOptional()
+  gainGrams?: number;
+
+  @IsString()
+  @IsOptional()
+  supplier?: string;
+
+  @IsNumber()
+  @IsOptional()
   portionsCount?: number;
 
   @IsNumber()
@@ -82,6 +90,14 @@ export class UpdatePortioningDto {
   @IsNumber()
   @IsOptional()
   lossPercentage?: number;
+
+  @IsNumber()
+  @IsOptional()
+  gainGrams?: number;
+
+  @IsString()
+  @IsOptional()
+  supplier?: string;
 
   @IsNumber()
   @IsOptional()

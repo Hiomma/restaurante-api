@@ -49,6 +49,14 @@ export class Portioning {
   @Prop()
   lossPercentage: number;
 
+  /** Ganho de peso (peso limpo > peso bruto), ex.: receitas com ingredientes sem etiqueta. */
+  @Prop({ default: 0 })
+  gainGrams: number;
+
+  /** Fornecedor de quem veio a matéria-prima porcionada (snapshot). */
+  @Prop()
+  supplier: string;
+
   @Prop()
   portionsCount: number;
 

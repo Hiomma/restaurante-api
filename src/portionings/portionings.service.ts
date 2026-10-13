@@ -56,6 +56,8 @@ export class PortioningsService {
       lossPercentage,
       portionsCount,
       portionWeightGrams,
+      gainGrams: Math.max(0, dto.cleanWeightGrams - dto.rawWeightGrams),
+      supplier: dto.supplier,
       date: dto.date,
       lote: dto.lote,
       employeeName: dto.employeeName,

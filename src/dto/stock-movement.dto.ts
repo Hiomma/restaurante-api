@@ -30,6 +30,14 @@ export class CreateStockMovementDto {
   @IsOptional()
   reason?: string;
 
+  @IsString()
+  @IsOptional()
+  destination?: string;
+
+  @IsString()
+  @IsOptional()
+  userName?: string;
+
   @IsDateString()
   date: string;
 }

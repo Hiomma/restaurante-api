@@ -54,6 +54,19 @@ export class CreateStockItemDto {
   @IsString()
   @IsOptional()
   destination?: string;
+
+  @IsString()
+  @IsOptional()
+  supplier?: string;
+
+  /**
+   * QR Code already shown to the user on the label preview. When present it
+   * is stored as-is so the printed QR is exactly the one that was previewed
+   * (the server only generates one when the client does not send it).
+   */
+  @IsString()
+  @IsOptional()
+  qrCode?: string;
 }
 
 export class UpdateStockItemDto {
@@ -81,6 +94,10 @@ export class UpdateStockItemDto {
   @IsString()
   @IsOptional()
   destination?: string;
+
+  @IsString()
+  @IsOptional()
+  supplier?: string;
 }
 
 export class StockItemQueryDto {
@@ -99,4 +116,8 @@ export class StockItemQueryDto {
   @IsString()
   @IsOptional()
   destination?: string;
+
+  @IsString()
+  @IsOptional()
+  supplier?: string;
 }

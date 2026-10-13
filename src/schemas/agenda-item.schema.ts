@@ -17,6 +17,12 @@ export class AgendaItem {
   @Prop()
   observations: string;
 
+  @Prop({
+    default: 'pendente',
+    enum: ['no_prazo', 'em_andamento', 'pendente', 'finalizado'],
+  })
+  status: string;
+
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   owner: Types.ObjectId;
 }
