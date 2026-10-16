@@ -6,8 +6,10 @@ import { UsersService } from '../users/users.service.js';
 import { EmployeesService } from '../employees/employees.service.js';
 import { RequestWithUser } from '../types/request-with-user.js';
 import { scopeOf } from '../types/scope.js';
+import { EmployeeRestrictionsGuard } from '../common/employee-restrictions.guard.js';
+import { RestrictEmployee } from '../common/restrict-employee.decorator.js';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), EmployeeRestrictionsGuard)
 @Controller('stock-movements')
 export class StockMovementsController {
   constructor(
@@ -53,11 +55,13 @@ export class StockMovementsController {
   }
 
   @Put(':id')
+  @RestrictEmployee()
   update(@Param('id') id: string, @Body() dto: UpdateStockMovementDto, @Req() req: RequestWithUser) {
     return this.stockMovementsService.update(id, dto, scopeOf(req.user));
   }
 
   @Delete(':id')
+  @RestrictEmployee()
   remove(@Param('id') id: string, @Req() req: RequestWithUser) {
     return this.stockMovementsService.remove(id, scopeOf(req.user));
   }

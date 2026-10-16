@@ -6,4 +6,5 @@ export * from './supplier.schema.js';
 export * from './product.schema.js';
 export * from './portioning.schema.js';
 export * from './stock-item.schema.js';
+export * from './stock-item-removal.schema.js';
 export * from './stock-movement.schema.js';

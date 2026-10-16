@@ -4,13 +4,16 @@ import { AgendaItemsService } from './agenda-items.service.js';
 import { CreateAgendaItemDto, UpdateAgendaItemDto } from '../dto/agenda-item.dto.js';
 import { RequestWithUser } from '../types/request-with-user.js';
 import { scopeOf } from '../types/scope.js';
+import { EmployeeRestrictionsGuard } from '../common/employee-restrictions.guard.js';
+import { RestrictEmployee } from '../common/restrict-employee.decorator.js';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), EmployeeRestrictionsGuard)
 @Controller('agenda-items')
 export class AgendaItemsController {
   constructor(private agendaItemsService: AgendaItemsService) {}
 
   @Post()
+  @RestrictEmployee()
   create(@Body() dto: CreateAgendaItemDto, @Req() req: RequestWithUser) {
     return this.agendaItemsService.create(dto, req.user.userId);
   }
@@ -26,11 +29,13 @@ export class AgendaItemsController {
   }
 
   @Put(':id')
+  @RestrictEmployee()
   update(@Param('id') id: string, @Body() dto: UpdateAgendaItemDto, @Req() req: RequestWithUser) {
     return this.agendaItemsService.update(id, dto, scopeOf(req.user));
   }
 
   @Delete(':id')
+  @RestrictEmployee()
   remove(@Param('id') id: string, @Req() req: RequestWithUser) {
     return this.agendaItemsService.remove(id, scopeOf(req.user));
   }

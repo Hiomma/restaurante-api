@@ -1,7 +1,11 @@
-import { Injectable, OnModuleInit, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, OnModuleInit, NotFoundException, ConflictException, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { StockItem, StockItemDocument } from '../schemas/stock-item.schema.js';
+import {
+  StockItemRemoval,
+  StockItemRemovalDocument,
+} from '../schemas/stock-item-removal.schema.js';
 import { CreateStockItemDto, UpdateStockItemDto, StockItemQueryDto } from '../dto/stock-item.dto.js';
 import { Scope, ownerFilter, idFilter } from '../types/scope.js';
 
@@ -19,6 +23,8 @@ export class StockItemsService implements OnModuleInit {
   constructor(
     @InjectModel(StockItem.name)
     private stockItemModel: Model<StockItemDocument>,
+    @InjectModel(StockItemRemoval.name)
+    private removalModel: Model<StockItemRemovalDocument>,
   ) {}
 
   /**
@@ -114,8 +120,34 @@ export class StockItemsService implements OnModuleInit {
     const item = await this.stockItemModel
       .findOne({ qrCode, ...ownerFilter(scope) })
       .exec();
-    if (!item) throw new NotFoundException('Stock item not found');
-    return item;
+    if (item) return item;
+
+    // Sem item ativo: a etiqueta pode ter sido baixada. O tombstone responde
+    // que ela JÁ foi usada (410) em vez de fingir que nunca existiu; só sem
+    // tombstone o resultado é 404 (código nunca visto neste restaurante).
+    const removal = await this.removalModel
+      .findOne({ qrCode, ...ownerFilter(scope) })
+      .sort({ removedAt: -1 })
+      .exec();
+    if (removal) {
+      throw new HttpException(
+        {
+          used: true,
+          message: 'Etiqueta já baixada',
+          qrCode: removal.qrCode,
+          productName: removal.productName,
+          type: removal.type,
+          weightGrams: removal.weightGrams,
+          destination: removal.destination,
+          userName: removal.userName,
+          removedAt: removal.removedAt,
+          reason: removal.reason,
+        },
+        410,
+      );
+    }
+
+    throw new NotFoundException('Stock item not found');
   }
 
   async update(id: string, dto: UpdateStockItemDto, scope: Scope): Promise<StockItemDocument> {
@@ -126,9 +158,29 @@ export class StockItemsService implements OnModuleInit {
     return item;
   }
 
-  async remove(id: string, scope: Scope): Promise<void> {
-    const result = await this.stockItemModel.findOneAndDelete(idFilter(id, scope)).exec();
-    if (!result) throw new NotFoundException('Stock item not found');
+  /**
+   * Baixa da etiqueta. Primeiro localiza o item escopado (ausente → 404,
+   * como antes); se existir, grava o tombstone com a cópia dos campos e só
+   * então deleta — a consulta posterior ao QR continua sabendo que a
+   * etiqueta foi usada, para onde foi e por quem.
+   */
+  async remove(id: string, scope: Scope, actorName?: string): Promise<void> {
+    const item = await this.stockItemModel.findOne(idFilter(id, scope)).exec();
+    if (!item) throw new NotFoundException('Stock item not found');
+
+    await this.removalModel.create({
+      qrCode: item.qrCode,
+      owner: item.owner,
+      productId: item.product.productId,
+      productName: item.product.productName,
+      type: item.type,
+      weightGrams: item.weightGrams,
+      lote: item.lote,
+      destination: item.destination,
+      userName: actorName,
+    });
+
+    await this.stockItemModel.deleteOne({ _id: item._id }).exec();
   }
 
   async getLowStock(scope: Scope): Promise<StockItemDocument[]> {

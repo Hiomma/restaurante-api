@@ -4,8 +4,10 @@ import { PortioningsService } from './portionings.service.js';
 import { CreatePortioningDto, UpdatePortioningDto } from '../dto/portioning.dto.js';
 import { RequestWithUser } from '../types/request-with-user.js';
 import { scopeOf } from '../types/scope.js';
+import { EmployeeRestrictionsGuard } from '../common/employee-restrictions.guard.js';
+import { RestrictEmployee } from '../common/restrict-employee.decorator.js';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), EmployeeRestrictionsGuard)
 @Controller('portionings')
 export class PortioningsController {
   constructor(private portioningsService: PortioningsService) {}
@@ -26,11 +28,13 @@ export class PortioningsController {
   }
 
   @Put(':id')
+  @RestrictEmployee()
   update(@Param('id') id: string, @Body() dto: UpdatePortioningDto, @Req() req: RequestWithUser) {
     return this.portioningsService.update(id, dto, scopeOf(req.user));
   }
 
   @Delete(':id')
+  @RestrictEmployee()
   remove(@Param('id') id: string, @Req() req: RequestWithUser) {
     return this.portioningsService.remove(id, scopeOf(req.user));
   }

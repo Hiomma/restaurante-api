@@ -34,6 +34,14 @@ export class Portioning {
   @Prop({ type: PortioningProductSnapshotSchema, required: true })
   product: PortioningProductSnapshot;
 
+  /**
+   * Matéria-prima de entrada (snapshot): o relatório de perdas mostra de
+   * qual produto bruto veio a perda, não apenas o produto final gerado.
+   * Opcional porque registros antigos foram gravados antes deste snapshot.
+   */
+  @Prop({ type: PortioningProductSnapshotSchema })
+  rawProduct?: PortioningProductSnapshot;
+
   @Prop({ type: [PortioningOutputSchema], default: [] })
   outputs: PortioningOutput[];
 

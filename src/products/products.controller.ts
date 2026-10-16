@@ -4,13 +4,16 @@ import { ProductsService } from './products.service.js';
 import { CreateProductDto, UpdateProductDto } from '../dto/product.dto.js';
 import { RequestWithUser } from '../types/request-with-user.js';
 import { scopeOf } from '../types/scope.js';
+import { EmployeeRestrictionsGuard } from '../common/employee-restrictions.guard.js';
+import { RestrictEmployee } from '../common/restrict-employee.decorator.js';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), EmployeeRestrictionsGuard)
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
 
   @Post()
+  @RestrictEmployee()
   create(@Body() dto: CreateProductDto, @Req() req: RequestWithUser) {
     return this.productsService.create(dto, req.user.userId);
   }
@@ -26,11 +29,13 @@ export class ProductsController {
   }
 
   @Put(':id')
+  @RestrictEmployee()
   update(@Param('id') id: string, @Body() dto: UpdateProductDto, @Req() req: RequestWithUser) {
     return this.productsService.update(id, dto, scopeOf(req.user));
   }
 
   @Delete(':id')
+  @RestrictEmployee()
   remove(@Param('id') id: string, @Req() req: RequestWithUser) {
     return this.productsService.remove(id, scopeOf(req.user));
   }

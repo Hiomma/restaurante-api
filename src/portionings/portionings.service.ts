@@ -49,6 +49,9 @@ export class PortioningsService {
 
     const portioning = new this.portioningModel({
       product: primaryProduct,
+      // Matéria-prima de entrada (dto.productId/productName) — o produto
+      // final continua em `product`, que pode ser um dos itens de `outputs`.
+      rawProduct: { productId: dto.productId, productName: dto.productName },
       outputs,
       rawWeightGrams: dto.rawWeightGrams,
       cleanWeightGrams: dto.cleanWeightGrams,

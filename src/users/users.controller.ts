@@ -5,8 +5,10 @@ import { EmployeesService } from '../employees/employees.service.js';
 import { UpdateUserDto, ChangePasswordDto, ResetPasswordDto } from '../dto/user.dto.js';
 import { RequestWithUser } from '../types/request-with-user.js';
 import { scopeOf } from '../types/scope.js';
+import { EmployeeRestrictionsGuard } from '../common/employee-restrictions.guard.js';
+import { RestrictEmployee } from '../common/restrict-employee.decorator.js';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), EmployeeRestrictionsGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -45,6 +47,7 @@ export class UsersController {
   }
 
   @Put('me/password')
+  @RestrictEmployee()
   async changeMyPassword(
     @Req() req: RequestWithUser,
     @Body() dto: ChangePasswordDto,
