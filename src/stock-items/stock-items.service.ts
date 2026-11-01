@@ -163,10 +163,16 @@ export class StockItemsService implements OnModuleInit {
    * como antes); se existir, grava o tombstone com a cópia dos campos e só
    * então deleta — a consulta posterior ao QR continua sabendo que a
    * etiqueta foi usada, para onde foi e por quem.
+   *
+   * `destination` é o destino da baixa informado na exclusão (obrigatório
+   * na UI): substitui o destino atual do item no tombstone, para o
+   * histórico registrar para onde a etiqueta foi de fato dada baixa.
    */
-  async remove(id: string, scope: Scope, actorName?: string): Promise<void> {
+  async remove(id: string, scope: Scope, actorName?: string, destination?: string): Promise<void> {
     const item = await this.stockItemModel.findOne(idFilter(id, scope)).exec();
     if (!item) throw new NotFoundException('Stock item not found');
+
+    const dest = destination?.trim() || item.destination;
 
     await this.removalModel.create({
       qrCode: item.qrCode,
@@ -176,7 +182,7 @@ export class StockItemsService implements OnModuleInit {
       type: item.type,
       weightGrams: item.weightGrams,
       lote: item.lote,
-      destination: item.destination,
+      destination: dest,
       userName: actorName,
     });
 

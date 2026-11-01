@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { UsersModule } from './users/users.module.js';
 import { AgendaItemsModule } from './agenda-items/agenda-items.module.js';
 import { EmployeesModule } from './employees/employees.module.js';
+import { GroupsModule } from './groups/groups.module.js';
 import { MovementDestinationsModule } from './movement-destinations/movement-destinations.module.js';
 import { SuppliersModule } from './suppliers/suppliers.module.js';
 import { ProductsModule } from './products/products.module.js';
@@ -26,6 +27,7 @@ import { StockMovementsModule } from './stock-movements/stock-movements.module.j
     UsersModule,
     AgendaItemsModule,
     EmployeesModule,
+    GroupsModule,
     MovementDestinationsModule,
     SuppliersModule,
     ProductsModule,

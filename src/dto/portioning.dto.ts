@@ -69,6 +69,11 @@ export class CreatePortioningDto {
   @IsOptional()
   lote?: string;
 
+  /** Lote de origem da matéria-prima (informado na entrada/recebimento). */
+  @IsString()
+  @IsOptional()
+  rawLote?: string;
+
   @IsString()
   @IsOptional()
   employeeName?: string;
@@ -110,6 +115,10 @@ export class UpdatePortioningDto {
   @IsString()
   @IsOptional()
   lote?: string;
+
+  @IsString()
+  @IsOptional()
+  rawLote?: string;
 
   @IsString()
   @IsOptional()

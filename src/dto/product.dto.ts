@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsIn, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsIn, IsNumber, IsBoolean, IsMongoId } from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
@@ -9,6 +9,14 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsIn(['Carnes', 'Aves', 'Peixes', 'Frios', 'Laticinios', 'Hortifruti', 'Graos', 'Bebidas', 'Temperos', 'Massas', 'Outros'])
   group: string;
+
+  @IsMongoId()
+  @IsOptional()
+  groupId?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  allowLooseLabel?: boolean;
 
   @IsString()
   @IsOptional()
@@ -45,6 +53,14 @@ export class UpdateProductDto {
   @IsOptional()
   @IsIn(['Carnes', 'Aves', 'Peixes', 'Frios', 'Laticinios', 'Hortifruti', 'Graos', 'Bebidas', 'Temperos', 'Massas', 'Outros'])
   group?: string;
+
+  @IsMongoId()
+  @IsOptional()
+  groupId?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  allowLooseLabel?: boolean;
 
   @IsString()
   @IsOptional()

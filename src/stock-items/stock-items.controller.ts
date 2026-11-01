@@ -69,8 +69,12 @@ export class StockItemsController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Req() req: RequestWithUser) {
+  async remove(
+    @Param('id') id: string,
+    @Req() req: RequestWithUser,
+    @Query('destination') destination?: string,
+  ) {
     const userName = await this.actorNameOf(req.user);
-    return this.stockItemsService.remove(id, scopeOf(req.user), userName);
+    return this.stockItemsService.remove(id, scopeOf(req.user), userName, destination);
   }
 }

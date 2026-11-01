@@ -29,6 +29,13 @@ export class Product {
   @Prop({ default: 0 })
   consumeAfterOpeningDays: number;
 
+  @Prop({ type: Types.ObjectId, ref: 'Group' })
+  groupId?: Types.ObjectId;
+
+  /** Permite gerar etiqueta avulsa para este produto (impressão fora da produção). */
+  @Prop({ default: false })
+  allowLooseLabel: boolean;
+
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   owner: Types.ObjectId;
 }

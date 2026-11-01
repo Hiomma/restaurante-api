@@ -3,6 +3,7 @@ export * from './user.dto.js';
 export * from './query.dto.js';
 export * from './agenda-item.dto.js';
 export * from './employee.dto.js';
+export * from './group.dto.js';
 export * from './movement-destination.dto.js';
 export * from './supplier.dto.js';
 export * from './product.dto.js';

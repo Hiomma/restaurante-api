@@ -77,6 +77,10 @@ export class Portioning {
   @Prop()
   lote: string;
 
+  /** Lote de origem da matéria-prima porcionada (informado na entrada/recebimento). */
+  @Prop()
+  rawLote: string;
+
   @Prop()
   employeeName: string;
 

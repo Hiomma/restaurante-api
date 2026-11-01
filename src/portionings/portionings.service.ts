@@ -63,6 +63,7 @@ export class PortioningsService {
       supplier: dto.supplier,
       date: dto.date,
       lote: dto.lote,
+      rawLote: dto.rawLote,
       employeeName: dto.employeeName,
       owner: new Types.ObjectId(ownerId),
     });
